@@ -13,7 +13,7 @@ public class UserViewModel
     {
         Id = user.Id;
         UserName = user.UserName;
-        Followers = user.Followers.Select(u => new UserViewModelUser(u));
+        Followers = user.Followers != null ? user.Followers.Select(u => new UserViewModelUser(u)) : Enumerable.Empty<UserViewModelUser>();
         Honks = Pagination<HonkViewModel>.Paginate(user.Honks.Select(h => new HonkViewModel(h)), page, perPage);
     }
     
