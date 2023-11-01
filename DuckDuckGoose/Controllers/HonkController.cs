@@ -1,5 +1,7 @@
-﻿using DuckDuckGoose.Areas.Identity.Data;
+using DuckDuckGoose.Models;
 using DuckDuckGoose.Models.Requests;
+using DuckDuckGoose.Models.ViewModels;
+using DuckDuckGoose.Areas.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using DuckDuckGoose.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -43,5 +45,27 @@ public class HonkController : Controller
         _honks.CreateHonk(newHonkRequest.Content, userId);
 
         return RedirectToAction("Index");
+    }
+    
+    
+    
+    public IActionResult Index(
+        [FromQuery] GetHonksRequest request
+    )
+    {
+        var honks = _honks.GetHonks(request);
+        HonksViewModel viewModel = new HonksViewModel
+        {
+            Honks = new Pagination<HonkViewModel>
+            {
+                Page = honks.Page,
+                PerPage = honks.PerPage,
+                Items = honks.Items.Select(honk => new HonkViewModel(honk)),
+                Total = honks.Total,
+            },
+            Filter = request.Filter,
+            Search = request.Search,
+        };
+        return View(viewModel);
     }
 }

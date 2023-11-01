@@ -1,0 +1,92 @@
+@using DuckDuckGoose.Models.ViewModels
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using DuckDuckGoose.Areas.Identity.Data
+@model UsersViewModel
+
+@inject SignInManager<DuckDuckGooseUser> SignInManager
+@inject UserManager<DuckDuckGooseUser> UserManager
+
+<h1 class="fs-4 bg-info border-top border-start border-end border-primary rounded-top mb-0 p-2">Find people you know.</h1>
+<form
+    asp-controller="User"
+    asp-action="Index"
+    method="get"
+    class="mb-3"
+>
+    <div class="input-group">
+        @if (Model.Filter is not null)
+        {
+            <input type="hidden" name="filter" value="@Model.Filter">
+        }
+        <input
+            class="form-control text-center"
+            name="search"
+            id="search"
+            placeholder="Search users"
+            aria-label="Search users"
+            value="@(Model.Search is null ? "" : Model.Search)"
+            style="padding-left: 3.375rem; border-top-left-radius: 0;"
+        >
+        <button class="btn btn-primary" type="submit" aria-label="Search" style="width: 2.625rem; border-top-right-radius: 0;"><i class="bi bi-search"></i></button>
+    </div>
+</form>
+@if (SignInManager.IsSignedIn(User))
+{
+    <nav class="nav nav-pills nav-justified">
+        <a
+            asp-controller="User"
+            asp-action="Index"
+            asp-route-search="@Model.Search"
+            class="nav-link rounded-0 rounded-top active"
+            aria-current="page">Everyone</a>
+    </nav>
+}
+<div class="card bg-info border-primary rounded-0 rounded-bottom">
+    <div class="card-body">
+        @if (Model.Users.Total > 0)
+        {
+            foreach (UserViewModel user in Model.Users.Items)
+            {
+                <div class="card text-start mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            @("@" + user.UserName)
+                        </h5>
+                        <p class="card-text">
+                            @user.Honks.Total honk@(user.Honks.Total == 1 ? "" : "s")
+                        </p>
+                    </div>
+                </div>
+            }
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mb-0">
+                    @foreach (int? pageNumber in Model.Users.IterPages())
+                    {
+                        if (pageNumber is null)
+                        {
+                            <li class="page-item"><a class="page-link">&ctdot;</a></li>
+                        }
+                        else
+                        {
+                            <li class="page-item @(pageNumber == Model.Users.Page ? "active" : "")">
+                                <a
+                                    asp-controller="User"
+                                    asp-action="Index"
+                                    asp-route-filter="@Model.Filter"
+                                    asp-route-search="@Model.Search"
+                                    asp-route-pagenumber="@pageNumber"
+                                    class="page-link"
+                                >@pageNumber</a>
+                            </li>
+                        }
+                    }
+                </ul>
+            </nav>
+        }
+        else
+        {
+            <p class="card-text">No users to show.</p>
+        }
+    </div>
+</div>
