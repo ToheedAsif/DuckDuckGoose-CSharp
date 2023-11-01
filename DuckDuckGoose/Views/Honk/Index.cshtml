@@ -43,7 +43,8 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <nav class="nav nav-pills nav-justified">
-        <a asp-controller="Honk"
+        <a
+            asp-controller="Honk"
             asp-action="Index"
             asp-route-search="@Model.Search"
             class="nav-link rounded-0 rounded-top active"
@@ -59,7 +60,12 @@
             <div class="card text-start mb-3">
                 <div class="card-body">
                     <h5 class="card-title">
-                    @("@" + honk.User.UserName)
+                    <a
+                        asp-controller="User"
+                        asp-action="UserPage"
+                        asp-route-userId="@honk.User.Id"
+                        class="text-decoration-none"
+                    >@("@" + honk.User.UserName)</a>
                     <span class="text-muted">&bullet; @honk.Timestamp.ToString("d MMM yyyy")</span>
                     </h5>
                     <p class="card-text">@honk.Content</p>

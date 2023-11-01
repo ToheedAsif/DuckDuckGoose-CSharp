@@ -22,6 +22,22 @@ public class UserController : Controller
         _users = users;
     }
 
+    [HttpGet("{userId}")]
+    public IActionResult UserPage([FromRoute] string userId, [FromQuery] int? page)
+    {
+        UserViewModel user;
+        try
+        {
+            user = new UserViewModel(_users.GetUserById(userId), page.HasValue ? page.Value : 1, 5);
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            return NotFound();
+        }
+    
+        return View(user);
+    }
+
     public IActionResult Index(
         [FromQuery] GetUsersRequest request
     )
