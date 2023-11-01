@@ -23,6 +23,7 @@ public class UserRepo : IUserRepo
         {
             return _context.Users
                 .Include(u => u.Honks)
+                .Include(u => u.Followers)
                 .Single(u => u.Id == id);
         }
         catch (InvalidOperationException e)

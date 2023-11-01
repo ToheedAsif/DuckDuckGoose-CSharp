@@ -23,7 +23,15 @@ public class UserController : Controller
     [HttpGet("{userId}")]
     public IActionResult UserPage([FromRoute] string userId, [FromQuery] int? page)
     {
-        UserViewModel user = new UserViewModel(_users.GetUserById(userId), page.HasValue ? page.Value : 1, 5);
+        UserViewModel user;
+        try
+        {
+            user = new UserViewModel(_users.GetUserById(userId), page.HasValue ? page.Value : 1, 5);
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            return NotFound();
+        }
         return View(user);
     }
 }
