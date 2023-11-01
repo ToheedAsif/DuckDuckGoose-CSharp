@@ -1,0 +1,15 @@
+@model DuckDuckGoose.Models.Requests.CreateHonkRequest
+
+<div class="card border-primary">
+    <div class="card-header bg-info border-primary">
+        <h1 class="fs-4 mb-0">Honk about something.</h1>
+    </div>
+    <div class="card-body">
+        <form method="post" asp-action="CreateHonk" class="mx-auto"> 
+            <div class="mb-3">
+                <textarea asp-for="Content" class="form-control" aria-label="Write your honk" rows="3"></textarea>
+            </div>
+            <input type="submit" class="btn btn-primary" value="Honk">
+        </form>
+    </div>
+</div>

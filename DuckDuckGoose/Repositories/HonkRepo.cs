@@ -9,6 +9,7 @@ namespace DuckDuckGoose.Repositories;
 public interface IHonkRepo
 {
     public Pagination<Honk> GetHonks(GetHonksRequest request);
+    public Honk CreateHonk(string content, string userId);
 }
 
 public class HonkRepo : IHonkRepo
@@ -32,5 +33,31 @@ public class HonkRepo : IHonkRepo
         }
         
         return Pagination<Honk>.Paginate(filteredHonks, request.PageNumber ?? 1, 5);
+    }
+
+    public Honk CreateHonk(string content, string userId)
+    {
+        DuckDuckGooseUser user;
+
+        try
+        {
+            user = _context.Users
+                .Single(u => u.Id == userId);
+        }
+        catch (Exception e)
+        {
+            throw new ArgumentException($"Cannot find user with id {userId}", e);
+        }
+
+        var newHonk = new Honk
+        {
+            Content = content,
+            Timestamp = DateTime.Now.ToUniversalTime(),
+            User = user,
+        };
+
+        var addedEntity = _context.Honks.Add(newHonk);
+
+        return addedEntity.Entity;
     }
 }
